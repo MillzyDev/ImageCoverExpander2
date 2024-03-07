@@ -1,0 +1,10 @@
+﻿<Project>
+    <PropertyGroup>
+        <PluginName>$(RootNamespace)</PluginName>
+        <PluginAuthor>Millzy</PluginAuthor>
+        <PluginVersion>4.0.0</PluginVersion>
+        <PluginDescription>Expands the artwork cover of a song.</PluginDescription>
+        <PluginId>Millzy.$(PluginName)</PluginId>
+        <PluginWebsiteUrl>https://github.com/MillzyDev/ImageCoverExpander2</PluginWebsiteUrl>
+    </PropertyGroup>
+</Project> 

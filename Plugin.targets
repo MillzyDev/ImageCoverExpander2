@@ -1,0 +1,67 @@
+﻿<Project>
+    <Target Name="BuildInfo" BeforeTargets="BeforeCompile">
+        <PropertyGroup>
+            <BuildInfo><![CDATA[
+namespace $(RootNamespace) 
+{
+    internal static class BuildInfo
+    {
+        public const string Name = "$(PluginName)"%3B
+        public const string Author = "$(PluginAuthor)"%3B
+        public const string Version = "$(PluginVersion)"%3B
+        public const string Description = "$(PluginDescription)"%3B
+        public const string Id = "$(PluginId)"%3B
+    }
+}
+            ]]></BuildInfo>
+
+            <BuildInfoFilePath>$(IntermediateOutputPath)BuildInfo.g.cs</BuildInfoFilePath>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <Compile Include="$(BuildInfoFilePath)" />
+            <FileWrites Include="$(BuildInfoFilePath)" />
+        </ItemGroup>
+
+        <WriteLinesToFile File="$(BuildInfoFilePath)"
+                          Lines="$(BuildInfo)"
+                          WriteOnlyWhenDifferent="true"
+                          Overwrite="true" />
+
+        <Message Text="Generated BuildInfo.g.cs"
+                 Importance="high" />
+    </Target>
+
+    <Target Name="AutoInstall" AfterTargets="PostBuildEvent">
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\$(AssemblyName).pdb"
+              DestinationFolder="$(GameDir)\BepInEx\plugins" />
+
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).xml"
+              DestinationFolder="$(GameDir)\BepInEx\plugins"
+              Condition="Exists('$(OutputPath)\$(AssemblyName).xml')" />
+
+        <Message Text="Finished copying files to $(GameDir)\BepInEx\plugins"
+                 Importance="high" />
+    </Target>
+
+    <Target Name="ThunderstorePackage"
+            AfterTargets="PostBuildEvent"
+            Condition="'$(Configuration)' == 'Release'">
+
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
+              DestinationFolder="$(OutputPath)\StagingArea\BepInEx\plugins\" />
+
+        <Message Text="Finished staging mod files."
+                 Importance="high" />
+
+        <MakeDir Directories="$(OutputPath)\LunaMods" />
+
+        <ZipDirectory DestinationFile="$(OutputPath)\LunaMods\$(AssemblyName).zip"
+                      SourceDirectory="$(OutputPath)\StagingArea\"
+                      Overwrite="true"/>
+
+        <Message Text="Created LunaMods package ($(AssemblyName).zip) at $(OutputPath)\LunaMods\"
+                 Importance="high" />
+
+    </Target>
+</Project>
